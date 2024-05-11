@@ -10,9 +10,9 @@ BLAS.set_num_threads(1)
 ITensors.Strided.disable_threads()
 # 根据需要开启块稀疏多线程
 ITensors.enable_threaded_blocksparse(true)
-Nx = 6 
-Ny = 4
-U = 100.0
+Nx = 8
+Ny = 5
+U = 400.0
 del = 0.0
 tp = 0.0
 
@@ -24,7 +24,7 @@ function main(; Nx, Ny, U, del, tp)
     cutoff = [1E-6]
     noise = [1E-6, 1E-7, 1E-8, 0.0]
 
-    sites = siteinds("Electron", N;  conserve_qns=true)
+    sites = siteinds("Electron", N;  conserve_nf=true)
 
     lattice1 = lieb_lattice_intra(Nx, Ny; yperiodic=true)
     lattice2 = lieb_lattice_inter(Nx, Ny; yperiodic=true)
@@ -56,7 +56,8 @@ function main(; Nx, Ny, U, del, tp)
     H = MPO(os, sites)
     # Half filling
     # state = [(mod(n,4)==1 || mod(n,4) == 2) ? "Up" : "Dn" for n in 1:N]
-    state = [mod(n, 3)>1 ? "Dn" : "Up" for n in 1:N]
+    # state = [mod(n, 3)>1 ? "Dn" : "Up" for n in 1:N]
+    state = [(mod(2 * div(n, 3Ny) + ((mod(n , 3Ny) != 0) ? (mod(n, 3Ny) > 2Ny ? 2 : 1) : 0), 2) == 1 && mod((mod(n, 3Ny) > 2Ny  ? 2(mod(n, 3Ny) - 2Ny)-1 : (mod(n, 3Ny) == 0 ? 2Ny-1 : mod(n, 3Ny))), 2) == 1) ? "Dn" : "Up" for n in 1:N]
 
     # Initialize wavefunction to a random MPS
     # of bond-dimension 10 with same quantum

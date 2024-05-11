@@ -1,10 +1,11 @@
 using ITensors
 using Plots
 include("my_lattice.jl")
-function main(; Nx=4, Ny=4, U=100, t=1.0)
+
+function main(; Nx=8, Ny=4, U=50, t=1.0)
   N = Nx * Ny
 
-  nsweeps = 10
+  nsweeps = 20
   maxdim = [100, 200, 400, 800, 1600]
   cutoff = [1E-6]
   noise = [1E-6, 1E-7, 1E-8, 0.0]
@@ -31,7 +32,7 @@ function main(; Nx=4, Ny=4, U=100, t=1.0)
   # Initialize wavefunction to a random MPS
   # of bond-dimension 10 with same quantum
   # numbers as `state`
-  psi0 = randomMPS(sites, state; linkdims=10)
+  psi0 = randomMPS(sites, state; linkdims=5)
 
   energy, psi = dmrg(H, psi0; nsweeps, maxdim, cutoff, noise)
   @show t, U
@@ -43,12 +44,7 @@ function main(; Nx=4, Ny=4, U=100, t=1.0)
 end
 
 psi = main()
-plot_bond(square_lattice(8,4))
+
 magz = expect(psi,"Sz")
-plot_lieb_lattice_magnetic_moments(2,2,magz)
-sites = siteinds("Electron", 16; conserve_qns=true)
-state = [isodd(n) ? "Dn" : "Up" for n in 1:16]
-psi0 = randomMPS(sites, state,linkdims=3)
-magz0 = expect(psi0,"Sz")
-sum(magz0)
-plot_lieb_lattice_magnetic_moments(2,2,magz0)
+sum(magz)
+plot_square_lattice_magnetic_moments(4, 2, magz)

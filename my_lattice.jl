@@ -149,3 +149,37 @@ function anti_order(magz, Ny)
   return order
 end
 
+function plot_square_lattice_magnetic_moments(Nx, Ny, magz)
+  @assert length(magz) == 4 * Nx * Ny "The length of magnetic moments vector must equal 4 * Nx * Ny."
+  plot_size = max(Nx, Ny) * 100
+  # Create a scatter plot for the magnetic moments
+  plt = scatter(
+      # x coordinates for each site
+      [div(n - 1, 2 * Ny) + 1 for n in 1:length(magz)],
+      # y coordinates for each site
+      [mod(n - 1, 2 * Ny) + 1 for n in 1:length(magz)],
+      # Magnetic moment values as annotations
+      series_annotations=[(string(round(val, digits=4)), font(8,colorant"red")) for val in magz],
+      # Markersize is set to a small value to make sure the annotations are visible
+      markersize=6,
+      size=(plot_size, plot_size),
+      # Set the aspect ratio to 1 for a square lattice
+      aspect_ratio=0.6,
+      # Optionally, set a title for the plot
+      title="Magnetic Moments on Square Lattice",
+      # Set the x and y limits to match the lattice size
+      xlims=(1, 2 * Nx),
+      ylims=(1, 2 * Ny),
+      # Other styling options
+      dpi=1000,
+      label = ""
+  )
+
+  # Set the xticks and yticks to match the coordinates
+  xticks!(plt, 1:2:Nx*2-1)
+  yticks!(plt, 1:2:Ny*2-1)
+  savefig(plt, "lieb_mag")
+  # Display the plot
+  display(plt)
+  return plt
+end
