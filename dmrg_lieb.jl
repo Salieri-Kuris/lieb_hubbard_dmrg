@@ -11,16 +11,16 @@ ITensors.Strided.disable_threads()
 # 根据需要开启块稀疏多线程
 ITensors.enable_threaded_blocksparse(true)
 Nx = 8
-Ny = 5
-U = 400.0
+Ny = 4
+U = 50.0
 del = 0.0
 tp = 0.0
 
 function main(; Nx, Ny, U, del, tp)
     N = 3 * Nx * Ny
     t = 1.0
-    nsweeps = 20
-    maxdim = [100, 200, 400, 800, 1600]
+    nsweeps = 200
+    maxdim = [100, 200, 400, 800, 1800]
     cutoff = [1E-6]
     noise = [1E-6, 1E-7, 1E-8, 0.0]
 
